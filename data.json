@@ -1,0 +1,131 @@
+{
+	"AT XXI": {
+		"date": "2025 (YC 127)",
+		"winner": "The Tuskers Co.",
+		"ships": [
+			89808,
+			89807
+		]
+	},
+	"AT XX": {
+		"date": "2024 (YC 126)",
+		"winner": "The Tuskers Co.",
+		"ships": [
+			85062,
+			85229,
+			85236
+		]
+	},
+	"AT XIX": {
+		"date": "2023 (YC 125)",
+		"winner": "Fraternity.",
+		"ships": [
+			78414,
+			77726
+		]
+	},
+	"AT XVIII": {
+		"date": "2022 (YC 124)",
+		"winner": "TRUTH. HONOUR. LIGHT.",
+		"ships": [
+			74141,
+			74316
+		]
+	},
+	"AT XVII": {
+		"date": "2021 (YC 123)",
+		"winner": "HYDRA RELOADED",
+		"ships": [
+			60765,
+			60764
+		]
+	},
+	"AT XVI": {
+		"date": "2018 (YC 120)",
+		"winner": "VYDRA RELOLDED",
+		"ships": [
+			48636,
+			48635
+		]
+	},
+	"AT XV": {
+		"date": "2017 (YC 119)",
+		"winner": "VYDRA RELOLDED",
+		"ships": [
+			45531,
+			45530
+		]
+	},
+	"AT XIV": {
+		"date": "2016 (YC 118)",
+		"winner": "The Tuskers Co.",
+		"ships": [
+			42246,
+			42245
+		]
+	},
+	"AT XIII": {
+		"date": "2015 (YC 117)",
+		"winner": "Pandemic Legion",
+		"ships": [
+			35779,
+			35781
+		]
+	},
+	"AT XII": {
+		"date": "2014 (YC 116)",
+		"winner": "The Camel Empire",
+		"ships": [
+			33673,
+			33675
+		]
+	},
+	"AT XI": {
+		"date": "2013 (YC 115)",
+		"winner": "Pandemic Legion",
+		"ships": [
+			33397,
+			33395
+		]
+	},
+	"AT X": {
+		"date": "2012 (YC 114)",
+		"winner": "Verge of Collapse",
+		"ships": [
+			32788,
+			32790
+		]
+	},
+	"AT IX": {
+		"date": "2011 (YC 113)",
+		"winner": "HYDRA RELOADED",
+		"ships": [
+			3516,
+			3518
+		]
+	},
+	"AT VIII": {
+		"date": "2010 (YC 112)",
+		"winner": "Pandemic Legion",
+		"ships": [
+			2834,
+			2836
+		]
+	},
+	"AT VII": {
+		"date": "2009 (YC 111)",
+		"winner": "Pandemic Legion",
+		"ships": [
+			32207,
+			32209
+		]
+	},
+	"AT III": {
+		"date": "2006 (YC 108)",
+		"winner": "Band of Brothers",
+		"ships": [
+			26840,
+			26842
+		]
+	}
+}
