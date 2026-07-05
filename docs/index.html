@@ -27,7 +27,7 @@
             align-items: center;
         }
 
-        /* 优化后的顶部固定页眉：调低不透明度至 0.65 增强通透感 */
+        /* 顶部固定页眉：半透明磨砂玻璃效果 */
         .sticky-header {
             position: sticky;
             top: 0;
@@ -69,7 +69,7 @@
             margin: 0.2rem 0 0 0;
         }
 
-        /* 语言选择下拉列表样式 */
+        /* 语言选择下拉列表 */
         .lang-select {
             background-color: #1c232a;
             color: var(--text-primary);
@@ -82,7 +82,7 @@
             letter-spacing: 1px;
             outline: none;
             transition: all 0.2s ease;
-            appearance: none; /* 清除默认样式 */
+            appearance: none;
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
             background-repeat: no-repeat;
@@ -237,10 +237,19 @@
             min-height: 44px;
         }
 
-        .ship-name {
+        /* 优化超链接样式，融入原有科技感 */
+        .ship-link {
             font-size: 1.1rem;
             font-weight: 600;
             color: #ffffff;
+            text-decoration: none;
+            transition: color 0.15s ease;
+            display: inline-block;
+        }
+
+        .ship-link:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
         }
 
         .ship-id {
@@ -268,13 +277,12 @@
 </head>
 <body>
 
-    <!-- 吸顶页眉（半透明磨砂效果） -->
+    <!-- 固定页眉（半透明） -->
     <header class="sticky-header">
         <div class="header-title-area">
             <h1>Alliance Tournament</h1>
             <p class="subtitle" id="pageSubtitle">历年联盟锦标赛冠军荣誉与限量独占奖品清单</p>
         </div>
-        <!-- 下拉列表语言选择 -->
         <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
             <option value="zh">简体中文 (ZH)</option>
             <option value="en">English (EN)</option>
@@ -291,11 +299,10 @@
         let currentLang = 'zh'; 
         let cachedConfigData = null; 
 
-        // 核心：请求飞船详情，带时间戳防御缓存
-        async function loadShipDetails(typeId, nameEl, imgEl, wrapperEl, lang) {
+        // 异步请求飞船数据，防御 ESI 缓存并动态更新超链接文本
+        async function loadShipDetails(typeId, linkEl, imgEl, wrapperEl, lang) {
             try {
                 const timestamp = Date.now();
-                // 引入 ?t=timestamp 防止强缓存拦截多语言切换
                 const response = await fetch(`https://esi.evetech.net/universe/types/${typeId}?t=${timestamp}`, {
                     method: 'GET',
                     headers: {
@@ -307,7 +314,9 @@
                 const data = await response.json();
                 
                 if (currentLang === lang) {
-                    nameEl.innerText = data.name;
+                    // 移除文字内部的加载圈，填入实际飞船名称
+                    linkEl.innerText = data.name;
+                    
                     imgEl.src = `https://images.evetech.net/types/${typeId}/render`;
                     imgEl.onload = () => {
                         const localSpinner = wrapperEl.querySelector('.spinner-sm');
@@ -316,7 +325,7 @@
                     };
                 }
             } catch (error) {
-                nameEl.innerText = lang === 'zh' ? `未知飞船 (ID: ${typeId})` : `Unknown Ship (ID: ${typeId})`;
+                linkEl.innerText = lang === 'zh' ? `未知飞船 (ID: ${typeId})` : `Unknown Ship (ID: ${typeId})`;
                 const localSpinner = wrapperEl.querySelector('.spinner-sm');
                 if (localSpinner) localSpinner.remove();
             }
@@ -357,15 +366,19 @@
                     const nameContainer = document.createElement('div');
                     nameContainer.className = 'ship-name-container';
                     
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'ship-name';
-                    nameSpan.innerHTML = `<div class="spinner-sm"></div>`;
+                    // 将原本的 span 改为带有 target="_blank" 的 <a> 标签
+                    const nameLink = document.createElement('a');
+                    nameLink.className = 'ship-link';
+                    nameLink.href = `https://everef.net/types/${typeId}`;
+                    nameLink.target = '_blank';
+                    nameLink.rel = 'noopener noreferrer'; // 保证跳转安全
+                    nameLink.innerHTML = `<div class="spinner-sm"></div>`; // 加载状态的占位圈
 
                     const idSpan = document.createElement('span');
                     idSpan.className = 'ship-id';
                     idSpan.innerText = `TypeID: ${typeId}`;
 
-                    nameContainer.appendChild(nameSpan);
+                    nameContainer.appendChild(nameLink);
                     nameContainer.appendChild(idSpan);
                     
                     item.appendChild(wrapper);
@@ -373,7 +386,7 @@
                     shipsDiv.appendChild(item);
 
                     const imgElement = wrapper.querySelector('.ship-img');
-                    loadShipDetails(typeId, nameSpan, imgElement, wrapper, currentLang);
+                    loadShipDetails(typeId, nameLink, imgElement, wrapper, currentLang);
                 }
 
                 row.appendChild(infoDiv);
@@ -382,7 +395,6 @@
             }
         }
 
-        // 下拉列表改变事件
         function changeLanguage(lang) {
             currentLang = lang;
             if (cachedConfigData) {
@@ -392,7 +404,6 @@
 
         async function init() {
             try {
-                // 读取本地配置同样加入时间戳，确保实时
                 const res = await fetch(`./data.json?t=${Date.now()}`);
                 if (!res.ok) throw new Error('data.json not found');
                 cachedConfigData = await res.json();
