@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVE 历届联盟锦标赛 (AT) 奖品荣誉榜</title>
+    <title>EVE Alliance Tournament (AT) Prize & Glory</title>
     <style>
         :root {
             --bg-color: #0c0f12;
@@ -67,6 +67,7 @@
             color: var(--text-secondary);
             font-size: 0.85rem;
             margin: 0.2rem 0 0 0;
+            transition: color 0.2s ease;
         }
 
         /* 语言选择下拉列表 */
@@ -74,7 +75,7 @@
             background-color: #1c232a;
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            padding: 0.5rem 2rem 0.5rem 1rem;
+            padding: 0.5rem 2.2rem 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
@@ -86,7 +87,7 @@
             -webkit-appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
             background-repeat: no-repeat;
-            background-position: calc(100% - 10px) center;
+            background-position: calc(100% - 12px) center;
         }
 
         .lang-select:hover, .lang-select:focus {
@@ -237,7 +238,6 @@
             min-height: 44px;
         }
 
-        /* 优化超链接样式，融入原有科技感 */
         .ship-link {
             font-size: 1.1rem;
             font-weight: 600;
@@ -277,15 +277,23 @@
 </head>
 <body>
 
-    <!-- 固定页眉（半透明） -->
+    <!-- Top Sticky Header -->
     <header class="sticky-header">
         <div class="header-title-area">
             <h1>Alliance Tournament</h1>
-            <p class="subtitle" id="pageSubtitle">历年联盟锦标赛冠军荣誉与限量独占奖品清单</p>
+            <p class="subtitle" id="pageSubtitle">Alliance Tournament Champions & Limited Edition Prize Ships</p>
         </div>
+        
+        <!-- 8-Language Select -->
         <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
+            <option value="en" selected>English (EN)</option>
             <option value="zh">简体中文 (ZH)</option>
-            <option value="en">English (EN)</option>
+            <option value="de">Deutsch (DE)</option>
+            <option value="fr">Français (FR)</option>
+            <option value="ja">日本語 (JA)</option>
+            <option value="ru">Русский (RU)</option>
+            <option value="ko">한국어 (KO)</option>
+            <option value="es">Español (ES)</option>
         </select>
     </header>
 
@@ -296,10 +304,32 @@
     </div>
 
     <script>
-        let currentLang = 'zh'; 
+        let currentLang = 'en'; // Default set to English
         let cachedConfigData = null; 
 
-        // 异步请求飞船数据，防御 ESI 缓存并动态更新超链接文本
+        // Localization Dictionary
+        const l10nRegistry = {
+            subtitle: {
+                'en': 'Alliance Tournament Champions & Limited Edition Prize Ships',
+                'zh': '历年联盟锦标赛冠军荣誉与限量独占奖品清单',
+                'de': 'Allianzturnier-Champions & limitierte Editionen von Prämientext-Schiffen',
+                'fr': 'Champions du Tournoi d\'Alliance et Éditions Limitées de Vaisseaux Récompenses',
+                'ja': 'アライアンストーナメント歴代王者と限定配布艦船の栄誉殿堂',
+                'ru': 'Чемпионы Альянсового Турнира и Ограниченные Серии Призовых Кораблей',
+                'ko': '얼라이언스 토너먼트 역대 우승자 및 한정판 보상 함선 목록',
+                'es': 'Campeones del Torneo de Alianzas y Ediciones Limitadas de Naves de Premio'
+            },
+            champion: {
+                'en': 'CHAMPION', 'zh': '冠军', 'de': 'CHAMPION', 'fr': 'CHAMPION',
+                'ja': '優勝', 'ru': 'ЧЕМПИОН', 'ko': '우승', 'es': 'CAMPEÓN'
+            },
+            errorShip: {
+                'en': 'Unknown Ship', 'zh': '未知飞船', 'de': 'Unbekanntes Schiff', 'fr': 'Vaisseau Inconnu',
+                'ja': '未知の艦船', 'ru': 'Неизвестный корабль', 'ko': '알 수 없는 함선', 'es': 'Nave Desconocida'
+            }
+        };
+
+        // Fetch ship names and images from ESI API asynchronously
         async function loadShipDetails(typeId, linkEl, imgEl, wrapperEl, lang) {
             try {
                 const timestamp = Date.now();
@@ -314,7 +344,6 @@
                 const data = await response.json();
                 
                 if (currentLang === lang) {
-                    // 移除文字内部的加载圈，填入实际飞船名称
                     linkEl.innerText = data.name;
                     
                     imgEl.src = `https://images.evetech.net/types/${typeId}/render`;
@@ -325,7 +354,8 @@
                     };
                 }
             } catch (error) {
-                linkEl.innerText = lang === 'zh' ? `未知飞船 (ID: ${typeId})` : `Unknown Ship (ID: ${typeId})`;
+                const errPrefix = l10nRegistry.errorShip[lang] || l10nRegistry.errorShip['en'];
+                linkEl.innerText = `${errPrefix} (ID: ${typeId})`;
                 const localSpinner = wrapperEl.querySelector('.spinner-sm');
                 if (localSpinner) localSpinner.remove();
             }
@@ -335,11 +365,14 @@
             const container = document.getElementById('atContainer');
             container.innerHTML = ''; 
 
+            // 1. Update Subtitle
             const subtitleEl = document.getElementById('pageSubtitle');
-            subtitleEl.innerText = currentLang === 'zh' 
-                ? '历年联盟锦标赛冠军荣誉与限量独占奖品清单' 
-                : 'Alliance Tournament Champions & Limited Edition Prize Ships';
+            subtitleEl.innerText = l10nRegistry.subtitle[currentLang] || l10nRegistry.subtitle['en'];
 
+            // 2. Get Champion Badge Translation
+            const championText = l10nRegistry.champion[currentLang] || l10nRegistry.champion['en'];
+
+            // 3. Build Card Grid
             for (const [atKey, atValue] of Object.entries(atData)) {
                 const row = document.createElement('div');
                 row.className = 'at-row';
@@ -349,7 +382,7 @@
                 infoDiv.innerHTML = `
                     <div class="at-id">${atKey}</div>
                     <div class="at-date">${atValue.date}</div>
-                    <div class="at-winner"><span>CHAMPION</span>${atValue.winner}</div>
+                    <div class="at-winner"><span>${championText}</span>${atValue.winner}</div>
                 `;
 
                 const shipsDiv = document.createElement('div');
@@ -366,13 +399,12 @@
                     const nameContainer = document.createElement('div');
                     nameContainer.className = 'ship-name-container';
                     
-                    // 将原本的 span 改为带有 target="_blank" 的 <a> 标签
                     const nameLink = document.createElement('a');
                     nameLink.className = 'ship-link';
                     nameLink.href = `https://everef.net/types/${typeId}`;
                     nameLink.target = '_blank';
-                    nameLink.rel = 'noopener noreferrer'; // 保证跳转安全
-                    nameLink.innerHTML = `<div class="spinner-sm"></div>`; // 加载状态的占位圈
+                    nameLink.rel = 'noopener noreferrer';
+                    nameLink.innerHTML = `<div class="spinner-sm"></div>`; 
 
                     const idSpan = document.createElement('span');
                     idSpan.className = 'ship-id';
